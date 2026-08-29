@@ -1,0 +1,52 @@
+name: Daily Activity
+
+on:
+  schedule:
+    # 08:00 Tanzania (UTC+3)
+    - cron: "0 5 * * *"
+
+    # 11:00 Tanzania
+    - cron: "0 8 * * *"
+
+    # 14:00 Tanzania
+    - cron: "0 11 * * *"
+
+    # 17:00 Tanzania
+    - cron: "0 14 * * *"
+
+    # 21:00 Tanzania
+    - cron: "0 18 * * *"
+
+  # Allows you to run it manually from GitHub Actions
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-activity:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Download repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Update activity file
+      - name: Update activity
+        run: |
+          echo "Automation run: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> activity.log
+
+      # 3. Commit the change
+      - name: Commit changes
+        run: |
+          git config user.name "mwaka991"
+          git config user.email "ikinjakavenuke@gmail.com"
+
+          git add activity.log
+
+          git commit -m "chore: update daily activity" || exit 0
+
+          git push
